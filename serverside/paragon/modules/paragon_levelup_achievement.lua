@@ -28,7 +28,7 @@ local Constants = require("paragon_constant")
 local sf = string.format
 
 local Achievements = {}
-local AchievementID = 70000
+local BASE_ACHIEVEMENT_ID = 70000
 
 -- ============================================================================
 -- ACHIEVEMENT TABLE INITIALIZATION
@@ -38,14 +38,16 @@ local AchievementID = 70000
 --- Levels 10..100 -> every 10
 --- Levels 125..500 -> every 25
 local function _InitAchievementTable()
-    for level = 1, 100, 10 do
-        Achievements[level] = AchievementID
-        AchievementID = AchievementID + 1
+    local achievementID = BASE_ACHIEVEMENT_ID
+
+    for level = 10, 100, 10 do
+        Achievements[level] = achievementID
+        achievementID = achievementID + 1
     end
 
     for level = 125, 500, 25 do
-        Achievements[level] = AchievementID
-        AchievementID = AchievementID + 1
+        Achievements[level] = achievementID
+        achievementID = achievementID + 1
     end
 end
 

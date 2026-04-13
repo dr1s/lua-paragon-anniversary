@@ -27,10 +27,13 @@ ParagonExpData = {
 -- @param self Frame The ParagonExpBar frame
 function ParagonExpBar_OnLoad(self)
     self.textLocked = false
+    self.characterHooksInstalled = false
 
     if ParagonExpBarOverlayFrameText then
         ParagonExpBarOverlayFrameText:Hide()
     end
+
+    ParagonExpBar_SetupCharacterHooks()
 
     -- Initial update
     ParagonExpBar_Update()
@@ -42,11 +45,13 @@ end
 -- @param ... any Event arguments
 function ParagonExpBar_OnEvent(self, event, ...)
     if (event == "PLAYER_ENTERING_WORLD") then
+        ParagonExpBar_SetupCharacterHooks()
         ParagonExpBar_Update()
     elseif (event == "PLAYER_LEVEL_UP") then
         ParagonExpBar_Update()
     elseif (event == "UPDATE_FACTION") then
         ParagonExpBar_UpdatePosition()
+        ParagonExpBar_SyncTextVisibility()
     end
 end
 
@@ -98,6 +103,7 @@ function ParagonExpBar_Update()
     end
 
     ParagonExpBar_UpdateDependentBars()
+    ParagonExpBar_SyncTextVisibility()
 end
 
 --- Update the text display on the Paragon XP bar
@@ -143,9 +149,7 @@ function ShowParagonExpBarText(lock)
         ParagonExpBar.textLocked = true
     end
 
-    if (ParagonExpBarOverlayFrameText) then
-        ParagonExpBarOverlayFrameText:Show()
-    end
+    ParagonExpBar_SyncTextVisibility()
 end
 
 --- Hide the Paragon XP bar text
@@ -157,9 +161,7 @@ function HideParagonExpBarText(unlock)
         ParagonExpBar.textLocked = false
     end
 
-    if (ParagonExpBarOverlayFrameText and not ParagonExpBar.textLocked) then
-        ParagonExpBarOverlayFrameText:Hide()
-    end
+    ParagonExpBar_SyncTextVisibility()
 end
 
 function ParagonExpBar_UpdateDependentBars()
@@ -187,4 +189,50 @@ function ParagonExpBar_UpdateDependentBars()
 			PossessBarFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 36, anchorYOffset)
 		end
 	end
+end
+
+function ParagonExpBar_ShouldShowText()
+    if not ParagonExpBar then
+        return false
+    end
+
+    if ParagonExpBar.textLocked then
+        return true
+    end
+
+    if CharacterFrame and CharacterFrame:IsShown() then
+        return true
+    end
+
+    return false
+end
+
+function ParagonExpBar_SyncTextVisibility()
+    if not ParagonExpBarOverlayFrameText then
+        return
+    end
+
+    if ParagonExpBar_ShouldShowText() then
+        ParagonExpBarOverlayFrameText:Show()
+    else
+        ParagonExpBarOverlayFrameText:Hide()
+    end
+end
+
+function ParagonExpBar_SetupCharacterHooks()
+    if not ParagonExpBar or ParagonExpBar.characterHooksInstalled then
+        return
+    end
+
+    if CharacterFrame then
+        CharacterFrame:HookScript("OnShow", function()
+            ParagonExpBar_SyncTextVisibility()
+        end)
+
+        CharacterFrame:HookScript("OnHide", function()
+            ParagonExpBar_SyncTextVisibility()
+        end)
+
+        ParagonExpBar.characterHooksInstalled = true
+    end
 end

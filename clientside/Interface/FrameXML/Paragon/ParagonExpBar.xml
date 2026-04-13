@@ -121,9 +121,7 @@
 				ParagonExpBarOverlayFrameText:Show();
 			</OnEnter>
 			<OnLeave>
-				if (not ParagonExpBar.textLocked) then
-					ParagonExpBarOverlayFrameText:Hide();
-				end
+				ParagonExpBar_SyncTextVisibility();
 			</OnLeave>
 		</Scripts>
 	</Frame>

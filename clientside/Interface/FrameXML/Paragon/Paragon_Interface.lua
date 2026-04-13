@@ -182,6 +182,10 @@ end
 --- Called when UIParagon frame is shown
 -- Closes other micro button frames to avoid overlapping
 function UIParagon_OnShow()
+    if UIParagon.ShowMainMenuXP then
+        UIParagon.ShowMainMenuXP:SetChecked(ParagonSaved and ParagonSaved.showMainMenuXP == true)
+    end
+
     -- Close character frame
     if CharacterFrame and CharacterFrame:IsShown() then
         HideUIPanel(CharacterFrame)

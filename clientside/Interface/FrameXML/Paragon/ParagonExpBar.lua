@@ -27,7 +27,6 @@ ParagonExpData = {
 -- @param self Frame The ParagonExpBar frame
 function ParagonExpBar_OnLoad(self)
     self.textLocked = false
-    self:RegisterEvent("UPDATE_BARS"); -- new Event
 
     if ParagonExpBarOverlayFrameText then
         ParagonExpBarOverlayFrameText:Hide()
@@ -43,16 +42,10 @@ end
 -- @param ... any Event arguments
 function ParagonExpBar_OnEvent(self, event, ...)
     if (event == "PLAYER_ENTERING_WORLD") then
-        -- Register the standard hook so that the position updates along with the interface
-        if not self.hooked then
-            hooksecurefunc("UIParent_ManageFramePositions", ParagonExpBar_UpdatePosition)
-            self.hooked = true
-        end
         ParagonExpBar_Update()
-        ParagonExpBar_UpdatePosition()
     elseif (event == "PLAYER_LEVEL_UP") then
         ParagonExpBar_Update()
-    elseif (event == "UPDATE_FACTION" or event == "UPDATE_BARS") then
+    elseif (event == "UPDATE_FACTION") then
         ParagonExpBar_UpdatePosition()
     end
 end
@@ -166,22 +159,4 @@ function HideParagonExpBarText(unlock)
     if (ParagonExpBarOverlayFrameText and not ParagonExpBar.textLocked) then
         ParagonExpBarOverlayFrameText:Hide()
     end
-end
-
-function ParagonExpBar_UpdatePosition()
-    if not ParagonExpBar then return end
-
-    ParagonExpBar:ClearAllPoints()
-
-    local anchorFrame = MainMenuBar
-    local yOffset = 0
-
-
-    if MultiBarBottomLeft:IsShown() or MultiBarBottomRight:IsShown() then
-        yOffset = 35
-    else
-        yOffset = 14
-    end
-
-    ParagonExpBar:SetPoint("BOTTOM", anchorFrame, "TOP", 0, yOffset)
 end

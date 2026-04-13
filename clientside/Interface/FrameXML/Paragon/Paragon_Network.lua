@@ -56,7 +56,7 @@ local Addon = {
         [3] = "UIParagon_OnReceiveAllData",           -- Receive all data in bulk
         [4] = "UIParagon_OnReceiveAvailablePoints",   -- Receive available points to spend
         [5] = "UIParagon_OnReceiveStatistic",         -- Receive amount for specific statistic
-        [6] = "UIParagon_OnReceiveTargetLevel",      -- Receive player target paragon level
+        [6] = "UIParagon_OnReceiveTargetLevel",       -- Receive player target paragon level
     }
 }
 

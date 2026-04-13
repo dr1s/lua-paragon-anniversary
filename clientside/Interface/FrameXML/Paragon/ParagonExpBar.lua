@@ -55,7 +55,9 @@ end
 -- - If ReputationWatchBar is visible: stack above it
 -- - If ReputationWatchBar is hidden: take its place above MainMenuBar
 function ParagonExpBar_UpdatePosition()
-    if (not ParagonExpBar) then return end
+    if (not ParagonExpBar) then
+        return
+    end
 
     ParagonExpBar:ClearAllPoints()
 
@@ -64,6 +66,8 @@ function ParagonExpBar_UpdatePosition()
     else
         ParagonExpBar:SetPoint("BOTTOM", "MainMenuBar", "TOP", 0, -2)
     end
+
+    ParagonExpBar_UpdateDependentBars()
 end
 
 --- Update the ParagonExpBar display with current XP values
@@ -92,6 +96,8 @@ function ParagonExpBar_Update()
     else
         ParagonExpBar:Show()
     end
+
+    ParagonExpBar_UpdateDependentBars()
 end
 
 --- Update the text display on the Paragon XP bar
@@ -154,4 +160,31 @@ function HideParagonExpBarText(unlock)
     if (ParagonExpBarOverlayFrameText and not ParagonExpBar.textLocked) then
         ParagonExpBarOverlayFrameText:Hide()
     end
+end
+
+function ParagonExpBar_UpdateDependentBars()
+	if ParagonExpBar and ParagonExpBar:IsShown() then
+		local anchorFrame = MainMenuBar
+		local anchorYOffset = -3
+
+		if ParagonExpBar and ParagonExpBar:IsShown() then
+			anchorFrame = ParagonExpBar
+			anchorYOffset = 0
+		end
+
+		if ShapeshiftBarFrame then
+			ShapeshiftBarFrame:ClearAllPoints()
+			ShapeshiftBarFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 30, anchorYOffset)
+		end
+
+		if PetActionBarFrame then
+			PetActionBarFrame:ClearAllPoints()
+			PetActionBarFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 36, anchorYOffset)
+		end
+
+		if PossessBarFrame then
+			PossessBarFrame:ClearAllPoints()
+			PossessBarFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 36, anchorYOffset)
+		end
+	end
 end

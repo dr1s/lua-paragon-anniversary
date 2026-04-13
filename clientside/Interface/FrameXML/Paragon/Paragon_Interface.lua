@@ -23,12 +23,25 @@
 ]]
 
 -- ============================================================================
--- CVAR REGISTRATION
+-- PERSISTENT SETTINGS
 -- ============================================================================
 
--- Register custom CVar for Paragon MainMenuBar XP visibility
--- Parameters: name, defaultValue, characterSpecific (true/false)
-RegisterCVar("paragonShowMainMenuXP", "0", true)
+ParagonSaved = ParagonSaved or {}
+
+-- Comme le code est chargé via FrameXML côté client,
+-- on enregistre explicitement la variable à sauver.
+RegisterForSave("ParagonSaved")
+
+-- Valeurs par défaut
+if ParagonSaved.showMainMenuXP == nil then
+    -- migration depuis l'ancien CVar si présent
+    local legacy = GetCVar("paragonShowMainMenuXP")
+    if legacy ~= nil then
+        ParagonSaved.showMainMenuXP = (legacy == "1")
+    else
+        ParagonSaved.showMainMenuXP = false
+    end
+end
 
 -- ============================================================================
 -- STATIC POPUPS (Dialogues)
@@ -613,15 +626,7 @@ end
 -- Sets the initial state from CVar and configures the label
 -- @param self CheckButton The checkbox frame
 function UIParagon_ShowMainMenuXP_OnLoad(self)
-    -- Get saved setting from CVar, initialize if it doesn't exist
-    local cvarValue = GetCVar("paragonShowMainMenuXP")
-    if (cvarValue == nil) then
-        -- CVar doesn't exist yet, create it with default value (0 = disabled)
-        SetCVar("paragonShowMainMenuXP", "0")
-        cvarValue = "0"
-    end
-
-    local isEnabled = (cvarValue == "1")
+    local isEnabled = ParagonSaved.showMainMenuXP == true
 
     self:SetChecked(isEnabled)
 
@@ -635,10 +640,9 @@ end
 -- Toggles the visibility of ParagonExpBar on MainMenuBar
 -- @param self CheckButton The checkbox frame
 function UIParagon_ShowMainMenuXP_OnClick(self)
-    local isChecked = self:GetChecked()
+    local isChecked = self:GetChecked() and true or false
 
-    SetCVar("paragonShowMainMenuXP", isChecked and "1" or "0")
-
+    ParagonSaved.showMainMenuXP = isChecked
     UIParagon_UpdateMainMenuXPVisibility()
 
     if isChecked then
@@ -662,15 +666,11 @@ end
 --- Update the visibility of ParagonExpBar based on checkbox state
 -- This function is called when the checkbox is toggled or on load
 function UIParagon_UpdateMainMenuXPVisibility()
-    if not ParagonExpBar then return end
-
-    local cvarValue = GetCVar("paragonShowMainMenuXP")
-    if (cvarValue == nil) then
-        SetCVar("paragonShowMainMenuXP", "0")
-        cvarValue = "0"
+    if not ParagonExpBar then
+        return
     end
 
-    local isEnabled = (cvarValue == "1")
+    local isEnabled = ParagonSaved and ParagonSaved.showMainMenuXP == true
 
     if isEnabled then
         ParagonExpBar_Update()

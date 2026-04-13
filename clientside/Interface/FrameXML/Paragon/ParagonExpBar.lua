@@ -70,28 +70,23 @@ end
 -- Updates the StatusBar value and text display
 -- Also checks if the bar should be visible based on player level and user settings
 function ParagonExpBar_Update()
-    if (not ParagonExpBar or not ParagonExpBar.StatusBar) then return end
+    if (not ParagonExpBar or not ParagonExpBar.StatusBar) then
+        return
+    end
 
     local currentXP = ParagonExpData.currentXP
     local maxXP = ParagonExpData.maxXP
 
-    -- Update StatusBar range and value
     ParagonExpBar.StatusBar:SetMinMaxValues(0, maxXP)
     ParagonExpBar.StatusBar:SetValue(currentXP)
 
     ParagonExpBar_UpdateText()
     ParagonExpBar_UpdatePosition()
 
-    local cvarValue = GetCVar("paragonShowMainMenuXP")
-    if (cvarValue == nil) then
-        SetCVar("paragonShowMainMenuXP", "0")
-        cvarValue = "0"
-    end
+    local isEnabled = ParagonSaved and ParagonSaved.showMainMenuXP == true
 
-    local isEnabled = (cvarValue == "1")
-
-    if (not isEnabled) then
-        if (ParagonExpBar:IsShown()) then
+    if not isEnabled then
+        if ParagonExpBar:IsShown() then
             ParagonExpBar:Hide()
         end
     else

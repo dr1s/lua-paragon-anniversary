@@ -103,21 +103,46 @@ local function OnReceiveStat(statistics, cat_id)
     end
 end
 
+--- Calculates the net pending point usage from all local unsent changes
+-- Positive value = points spent, negative value = points refunded
+-- @return number
+local function GetPendingPointsDelta()
+    local delta = 0
+
+    if not PendingChanges or not PendingChanges.stats then
+        return 0
+    end
+
+    for _, change in pairs(PendingChanges.stats) do
+        delta = delta + ((change.value or 0) - (change.originalValue or 0))
+    end
+
+    return delta
+end
+
+--- Returns the effective available points including local pending changes
+-- @return number
+local function GetEffectiveAvailablePoints()
+    return (ParagonData.availablePoints or 0) - GetPendingPointsDelta()
+end
+
 --- Updates the points display in the UI
 -- Shows formatted text with singular/plural handling based on current locale
 -- Only updates if UIParagon frame is visible
 -- @usage Called automatically when points are received
 local function UpdateAvailablePointsDisplay()
-    -- Early exit if UI is not visible or frame doesn't exist
     if not UIParagon then return end
 
     local pointsFrame = UIParagon.Body.TopSpacer.Points
     if not pointsFrame then return end
 
     local Locales = GetLocaleTable()
-    local points = ParagonData.availablePoints
+    local points = GetEffectiveAvailablePoints()
 
-    -- Choose singular or plural form based on point count
+    if points < 0 then
+        points = 0
+    end
+
     local pointWord = (points == 1) and Locales.POINTS_SINGULAR or Locales.POINTS_PLURAL
     local text = string.format(Locales.POINTS_TO_SPEND, points, pointWord)
 
@@ -268,11 +293,9 @@ end
 -- @param delta number Amount to add/subtract (can be negative)
 -- @usage Called by mouse wheel, left click (+1), right click (-1) interactions
 function UIParagon_ModifyStatValue(categoryId, statId, delta)
-    -- Find the category's stats array
     local categoryStats = ParagonData.stats[categoryId]
     if not categoryStats then return end
 
-    -- Find the specific stat by ID
     local stat = nil
     for _, s in ipairs(categoryStats) do
         if s.id == statId then
@@ -283,38 +306,69 @@ function UIParagon_ModifyStatValue(categoryId, statId, delta)
 
     if not stat then return end
 
-    -- Create composite key for tracking changes
     local key = categoryId .. "_" .. statId
 
-    -- If this is the first change for this stat, store the original value
     if not PendingChanges.stats[key] then
         PendingChanges.stats[key] = {
             categoryId = categoryId,
             statId = statId,
-            value = stat.value,  -- Current value will be updated below
-            originalValue = stat.value  -- Store original value for reset/cancel
+            value = stat.value,
+            originalValue = stat.value
         }
     end
 
-    -- Calculate new value (prevent negative values)
-    local newValue = PendingChanges.stats[key].value + delta
-    if newValue < 0 then newValue = 0 end
+    local currentValue = PendingChanges.stats[key].value or 0
+    local newDelta = delta
 
-    -- Update the pending change value
+    -- Block additions if no points are available
+    if newDelta > 0 then
+        local effectiveAvailablePoints = GetEffectiveAvailablePoints()
+
+        if effectiveAvailablePoints <= 0 then
+            return
+        end
+
+        -- Clamp requested addition to remaining available points
+        if newDelta > effectiveAvailablePoints then
+            newDelta = effectiveAvailablePoints
+        end
+    end
+
+    local newValue = currentValue + newDelta
+
+    -- Prevent negative values
+    if newValue < 0 then
+        newValue = 0
+    end
+
+    -- Hard cap on stat limit
+    local statLimit = tonumber(stat.limit) or 0
+    if statLimit > 0 and newValue > statLimit then
+        newValue = statLimit
+    end
+
+    -- Nothing changed after clamp
+    if newValue == currentValue then
+        return
+    end
+
     PendingChanges.stats[key].value = newValue
 
-    -- Update UI display immediately for responsive feel
     UIParagon_UpdateStatDisplay(categoryId, statId, newValue)
 
-    -- Check if the new value is different from the original value
     local originalValue = PendingChanges.stats[key].originalValue
     if newValue == originalValue then
-        -- Value returned to original, remove from pending changes and clear visual marker
         PendingChanges.stats[key] = nil
         UIParagon_MarkStatAsModified(categoryId, statId, false)
     else
-        -- Value is different, mark as modified
         UIParagon_MarkStatAsModified(categoryId, statId, true)
+    end
+
+    -- Refresh points display immediately
+    UpdateAvailablePointsDisplay()
+
+    if ParagonMicroButton_UpdateNotification then
+        ParagonMicroButton_UpdateNotification()
     end
 end
 

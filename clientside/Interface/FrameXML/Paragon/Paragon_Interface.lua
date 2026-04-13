@@ -182,9 +182,9 @@ end
 --- Called when UIParagon frame is shown
 -- Closes other micro button frames to avoid overlapping
 function UIParagon_OnShow()
-    if UIParagon.ShowMainMenuXP then
-        UIParagon.ShowMainMenuXP:SetChecked(ParagonSaved and ParagonSaved.showMainMenuXP == true)
-    end
+	if UIParagon.ShowMainMenuXP then
+		UIParagon.ShowMainMenuXP:SetChecked(ParagonSaved and ParagonSaved.showMainMenuXP == true)
+	end
 
     -- Close character frame
     if CharacterFrame and CharacterFrame:IsShown() then
@@ -376,31 +376,27 @@ function UIParagon_RebuildStatistics()
                     -- Enable mouse wheel scrolling
                     statFrame:EnableMouseWheel(true)
                     statFrame:SetScript("OnMouseWheel", function(self, delta)
-                        if delta > 0 then
-                            -- If statLimit is 0 (unlimited) or value + 5 is within limit
-                            if (self.statLimit == 0) or ((stat.value + 5) <= (self.statLimit)) then
-                                UIParagon_ModifyStatValue(self.categoryId, self.statId, 5)  -- Scroll up: +5
-                            end
-                        else
-                            UIParagon_ModifyStatValue(self.categoryId, self.statId, -5) -- Scroll down: -5
-                        end
-                    end)
+						if delta > 0 then
+							UIParagon_ModifyStatValue(self.categoryId, self.statId, 5)   -- Scroll up: +5
+						else
+							UIParagon_ModifyStatValue(self.categoryId, self.statId, -5)  -- Scroll down: -5
+						end
+					end)
 
                     -- Mouse button interactions
                     statFrame:SetScript("OnMouseDown", function(self, button)
-                        if button == "LeftButton" and ((self.statLimit == 0) or ((stat.value + 1) <= self.statLimit)) then
-                            UIParagon_ModifyStatValue(self.categoryId, self.statId, 1)   -- Left click: +1
-                        elseif button == "RightButton" then
-                            UIParagon_ModifyStatValue(self.categoryId, self.statId, -1)  -- Right click: -1
-                        elseif button == "MiddleButton" then
-                            -- Middle click: Open dialog to choose Add/Remove then enter amount
-                            StaticPopup_Show("PARAGON_STAT_CHOOSE_ACTION", nil, nil, {
-                                categoryId = self.categoryId,
-                                statId = self.statId,
-                                statName = self.statTitle or "Stat"
-                            })
-                        end
-                    end)
+						if button == "LeftButton" then
+							UIParagon_ModifyStatValue(self.categoryId, self.statId, 1)   -- Left click: +1
+						elseif button == "RightButton" then
+							UIParagon_ModifyStatValue(self.categoryId, self.statId, -1)  -- Right click: -1
+						elseif button == "MiddleButton" then
+							StaticPopup_Show("PARAGON_STAT_CHOOSE_ACTION", nil, nil, {
+								categoryId = self.categoryId,
+								statId = self.statId,
+								statName = self.statTitle or "Stat"
+							})
+						end
+					end)
                 end
 
                 -- Reapply visual modification marker if this stat has pending changes

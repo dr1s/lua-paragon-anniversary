@@ -17,6 +17,8 @@ function MicroButtonTooltipText(text, action)
 	
 end
 
+local PARAGON_MICROBUTTON_MIN_LEVEL = 5
+
 function UpdateMicroButtons()
 	local playerLevel = UnitLevel("player");
 	if ( CharacterFrame:IsShown() ) then
@@ -26,7 +28,7 @@ function UpdateMicroButtons()
 		CharacterMicroButton:SetButtonState("NORMAL");
 		CharacterMicroButton_SetNormal();
 	end
-	
+
 	if ( SpellBookFrame:IsShown() ) then
 		SpellbookMicroButton:SetButtonState("PUSHED", 1);
 	else
@@ -49,10 +51,10 @@ function UpdateMicroButtons()
 	else
 		QuestLogMicroButton:SetButtonState("NORMAL");
 	end
-	
-	if ( ( GameMenuFrame:IsShown() ) 
-		or ( InterfaceOptionsFrame:IsShown()) 
-		or ( KeyBindingFrame and KeyBindingFrame:IsShown()) 
+
+	if ( ( GameMenuFrame:IsShown() )
+		or ( InterfaceOptionsFrame:IsShown())
+		or ( KeyBindingFrame and KeyBindingFrame:IsShown())
 		or ( MacroFrame and MacroFrame:IsShown()) ) then
 		MainMenuMicroButton:SetButtonState("PUSHED", 1);
 		MainMenuMicroButton_SetPushed();
@@ -73,7 +75,7 @@ function UpdateMicroButtons()
 			PVPMicroButton_SetNormal();
 		end
 	end
-	
+
 	if ( FriendsFrame:IsShown() ) then
 		SocialsMicroButton:SetButtonState("PUSHED", 1);
 	else
@@ -96,7 +98,7 @@ function UpdateMicroButtons()
 	else
 		HelpMicroButton:SetButtonState("NORMAL");
 	end
-	
+
 	if ( AchievementFrame and AchievementFrame:IsShown() ) then
 		AchievementMicroButton:SetButtonState("PUSHED", 1);
 	else
@@ -112,8 +114,12 @@ function UpdateMicroButtons()
 	if ( UIParagon and UIParagon:IsShown() ) then
 		ParagonMicroButton:SetButtonState("PUSHED", 1);
 	else
-		ParagonMicroButton:Enable();
-		ParagonMicroButton:SetButtonState("NORMAL");
+		if ( playerLevel < PARAGON_MICROBUTTON_MIN_LEVEL ) then
+			ParagonMicroButton:Disable();
+		else
+			ParagonMicroButton:Enable();
+			ParagonMicroButton:SetButtonState("NORMAL");
+		end
 	end
 
 	-- Keyring microbutton
@@ -182,6 +188,7 @@ function TalentMicroButton_OnEvent(self, event, ...)
 	if ( event == "PLAYER_LEVEL_UP" ) then
 		local level = ...;
 		UpdateMicroButtons();
+
 		if ( not CharacterFrame:IsShown() and level >= SHOW_TALENT_LEVEL) then
 			SetButtonPulse(self, 60, 1);
 		end
@@ -194,10 +201,31 @@ end
 
 --Paragon button specific functions
 function ParagonMicroButton_OnLoad(self)
-	self:SetNormalTexture("Interface\\Buttons\\UI-MicroButtonCharacter-Up");
-	self:SetPushedTexture("Interface\\Buttons\\UI-MicroButtonCharacter-Down");
-	self:SetHighlightTexture("Interface\\Buttons\\UI-MicroButton-Hilight");
+	LoadMicroButtonTextures(self, "Abilities");
+
+	self.minLevel = PARAGON_MICROBUTTON_MIN_LEVEL;
+	self:RegisterEvent("PLAYER_LEVEL_UP");
+	self:RegisterEvent("UNIT_LEVEL");
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("UPDATE_BINDINGS");
+end
+
+function ParagonMicroButton_OnEvent(self, event, ...)
+	if ( event == "PLAYER_LEVEL_UP" ) then
+		UpdateMicroButtons();
+
+		local level = ...;
+
+		if ( level == PARAGON_MICROBUTTON_MIN_LEVEL ) then
+			SetButtonPulse(self, 60, 1);
+		end
+
+	elseif ( event == "UNIT_LEVEL" or event == "PLAYER_ENTERING_WORLD" ) then
+		UpdateMicroButtons();
+	elseif ( event == "UPDATE_BINDINGS" ) then
+		self.tooltipText = MicroButtonTooltipText("Paragon Anniversary", "NIL");
+	end
+
 end
 
 function ParagonMicroButton_SetPushed()
@@ -209,6 +237,12 @@ function ParagonMicroButton_SetNormal()
 end
 
 function ToggleParagonFrame()
+	if ( UnitLevel("player") < PARAGON_MICROBUTTON_MIN_LEVEL ) then
+		return;
+	end
+
+	SetButtonPulse(ParagonMicroButton, 0, 0)
+
 	if (UIParagon:IsShown()) then
 		UIParagon:Hide();
 		ParagonMicroButton_SetNormal();
@@ -271,12 +305,14 @@ function ParagonMicroButton_UpdateNotification()
 
 	local notification = ParagonMicroButton.Notification
 
-	-- Only show if:
-	-- 1. Player has unspent points
-	-- 2. Notification was not manually dismissed
-	-- 3. Paragon frame is not currently open
+	local playerLevel = UnitLevel("player")
 	local hasUnspentPoints = ParagonData and ParagonData.availablePoints and ParagonData.availablePoints > 0
 	local frameNotOpen = not (UIParagon and UIParagon:IsShown())
+
+	if playerLevel < PARAGON_MICROBUTTON_MIN_LEVEL then
+		notification:Hide()
+		return
+	end
 
 	if hasUnspentPoints and not notification.dismissed and frameNotOpen then
 		notification:Show()

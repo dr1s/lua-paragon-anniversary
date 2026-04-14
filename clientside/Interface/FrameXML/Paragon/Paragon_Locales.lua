@@ -66,6 +66,13 @@ local Locales = {
         NOTIFICATION_MESSAGE = "Vous avez des points Paragon non distribués !",
         NOTIFICATION_DISMISS = "Cliquer pour masquer cette notification.",
 
+		-- ========================================================================
+        -- TOOLTIP
+        -- ========================================================================
+		PARAGON_TOOLTIP_TITLE = "Paragon Anniversary",
+		PARAGON_TOOLTIP_DESC = "Voir et gérer vos statistiques Paragon Anniversary.",
+		PARAGON_TOOLTIP_LOCKED = "Cette fonction est disponible au niveau 5.",
+
         -- ========================================================================
         -- TUTORIAL MODE
         -- ========================================================================

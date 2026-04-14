@@ -53,6 +53,7 @@ function ParagonExpBar_OnEvent(self, event, ...)
         ParagonExpBar_UpdatePosition()
         ParagonExpBar_SyncTextVisibility()
     end
+
 end
 
 --- Update the ParagonExpBar position based on ReputationWatchBar visibility
@@ -174,9 +175,23 @@ function ParagonExpBar_UpdateDependentBars()
 			anchorYOffset = 0
 		end
 
+		if MultiBarBottomLeft and MultiBarBottomLeft:IsShown() then
+            MultiBarBottomLeft:ClearAllPoints()
+            MultiBarBottomLeft:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 8, 5)
+        end
+
+		if MultiBarBottomRight and MultiBarBottomRight:IsShown() then
+            MultiBarBottomLeft:ClearAllPoints()
+            MultiBarBottomLeft:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 8, 5)
+        end
+
 		if ShapeshiftBarFrame then
 			ShapeshiftBarFrame:ClearAllPoints()
-			ShapeshiftBarFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 30, anchorYOffset)
+			if MultiBarBottomLeft and MultiBarBottomLeft:IsShown() then
+				ShapeshiftBarFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 30, 45)
+			else
+				ShapeshiftBarFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 30, 0)
+			end
 		end
 
 		if PetActionBarFrame then
@@ -232,6 +247,10 @@ function ParagonExpBar_SetupCharacterHooks()
         CharacterFrame:HookScript("OnHide", function()
             ParagonExpBar_SyncTextVisibility()
         end)
+
+		hooksecurefunc("UIParent_ManageFramePositions", function()
+			ParagonExpBar_UpdateDependentBars()
+		end)
 
         ParagonExpBar.characterHooksInstalled = true
     end

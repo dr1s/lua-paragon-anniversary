@@ -705,6 +705,11 @@ end
 function Hook.OnPlayerKillCreature(event, player, creature)
     if not player or not creature then return end
 
+    -- Exclude critters
+    if creature.GetCreatureType and creature:GetCreatureType() == 8 then
+        return
+    end
+
     local pLevel = player:GetLevel()
     local cLevel = creature:GetLevel() or 0
     local greyLevel = (pLevel <= 5) and 0 or (pLevel <= 39 and (pLevel - math.floor(pLevel/10) - 5) or (pLevel - math.floor(pLevel/5) - 1))

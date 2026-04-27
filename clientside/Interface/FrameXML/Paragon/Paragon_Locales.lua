@@ -159,7 +159,7 @@ local Locales = {
                 REPUTATION              = { name = "Bonus de réputation", description = "Augmente les points de réputation gagnés auprès des factions." },
                 EXPERIENCE              = { name = "Bonus d'expérience", description = "Multiplie les points d'expérience gagnés." },
                 GOLD                    = { name = "Bonus d'or", description = "Augmente la quantité d'or obtenue des ennemis." },
-                MOVE_SPEED              = { name = "Bonus de vitesse", description = "Augmente votre vitesse de déplacement." },
+                MOVE_SPEED              = { name = "Bonus de vitesse", description = "Augmente votre vitesse de marche." },
             }
         }
     },

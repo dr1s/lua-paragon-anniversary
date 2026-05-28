@@ -12,6 +12,10 @@
     @version 2.0
 ]]
 
+if not unpack then
+    unpack = table.unpack
+end
+
 local Object = Object or require("classic")
 
 ---@class Mediator

@@ -50,6 +50,40 @@ local EXPERIENCE_SOURCE = {
     QUEST = 4
 }
 
+-- Paragon data storage (compatibility layer for Eluna builds without GetData/SetData)
+local paragon_data_store = {}
+
+local function GetParagonData(player)
+    if not player then return nil end
+    if player.GetData then
+        return player:GetData("Paragon")
+    end
+    local guid = player:GetGUIDLow()
+    return paragon_data_store[guid]
+end
+
+local function SetParagonData(player, data)
+    if not player then return end
+    if player.SetData then
+        return player:SetData("Paragon", data)
+    end
+    local guid = player:GetGUIDLow()
+    paragon_data_store[guid] = data
+end
+
+local function ClearParagonData(player)
+    if not player then return end
+    if player.SetData then
+        player:SetData("Paragon", nil)
+        return
+    end
+    local guid = player:GetGUIDLow()
+    paragon_data_store[guid] = nil
+end
+
+Hook.GetParagonData = GetParagonData
+Hook.SetParagonData = SetParagonData
+
 -- ============================================================================
 -- PRIVATE FUNCTIONS
 -- ============================================================================
@@ -241,7 +275,7 @@ local function UpdatePlayerExperience(player, paragon, source_type, entry)
     player:SendServerResponse(Hook.Addon.Prefix, 4, paragon:GetPoints())
     player:SendServerResponse(Hook.Addon.Prefix, 2, paragon:GetExperience(), paragon:GetExperienceForNextLevel())
 
-    player:SetData("Paragon", paragon)
+    SetParagonData(player, paragon)
 
     Mediator.On("OnAfterUpdatePlayerExperience", {
         arguments = { player, paragon },
@@ -337,7 +371,7 @@ function OnParagonClientLoadRequest(player, _)
         return false
     end
 
-    local paragon = player:GetData("Paragon")
+    local paragon = GetParagonData(player)
     if not paragon then
         Hook.OnPlayerLogin(3, player)
         return false
@@ -407,7 +441,7 @@ function OnParagonClientSendStatistics(player, arg_table)
         return false
     end
 
-    local paragon = player:GetData("Paragon")
+    local paragon = GetParagonData(player)
     if not paragon then
         return false
     end
@@ -507,7 +541,7 @@ function OnParagonClientSendStatistics(player, arg_table)
         end
     end
 
-    player:SetData("Paragon", paragon)
+    SetParagonData(player, paragon)
 
     -- Reapply all stat bonuses after processing
     UpdatePlayerStatistics(player, paragon, true)
@@ -550,7 +584,7 @@ function Hook.OnPlayerStatLoad(guid_low, paragon)
         defaults = { paragon }
     })
 
-    player:SetData("Paragon", paragon)
+    SetParagonData(player, paragon)
 
     -- Apply all loaded statistics bonuses to the character
     UpdatePlayerStatistics(player, paragon, true)
@@ -618,7 +652,7 @@ function Hook.OnPlayerLogout(event, player)
         return
     end
 
-    local paragon = player:GetData("Paragon")
+    local paragon = GetParagonData(player)
     if not paragon then
         return
     end
@@ -638,6 +672,8 @@ function Hook.OnPlayerLogout(event, player)
     Mediator.On("OnAfterPlayerStatSave", {
         arguments = { player, paragon },
     })
+
+    ClearParagonData(player)
 end
 
 ---
@@ -678,7 +714,7 @@ end
 ---
 local function GiveParagonExp(target, sourceEntry)
     if not target then return end
-    local paragon = target:GetData("Paragon")
+    local paragon = GetParagonData(target)
     if paragon then
         UpdatePlayerExperience(target, paragon, EXPERIENCE_SOURCE.CREATURE, sourceEntry or 0)
     end
@@ -753,7 +789,7 @@ function Hook.OnPlayerAchievementComplete(event, player, achievement)
         return
     end
 
-    local paragon = player:GetData("Paragon")
+    local paragon = GetParagonData(player)
     if not paragon then
         return
     end
@@ -785,7 +821,7 @@ function Hook.OnPlayerQuestComplete(event, player, quest)
         return
     end
 
-    local paragon = player:GetData("Paragon")
+    local paragon = GetParagonData(player)
     if not paragon then
         return
     end
@@ -821,7 +857,7 @@ function Hook.OnPlayerSkillUpdate(event, player, skill_id, value, max, step, new
         return
     end
 
-    local paragon = player:GetData("Paragon")
+    local paragon = GetParagonData(player)
     if not paragon then
         return
     end
@@ -894,7 +930,7 @@ function Hook.OnPlayerCommand(event, player, command)
     end
 
     if command == "test" then
-        local paragon = player:GetData("Paragon")
+        local paragon = GetParagonData(player)
         if not paragon then
             return false
         end
@@ -904,7 +940,7 @@ function Hook.OnPlayerCommand(event, player, command)
 
         -- Add test stat value
         paragon:AddStatValue(1, 150)
-        player:SetData("Paragon", paragon)
+        SetParagonData(player, paragon)
 
         -- Reapply bonuses
         UpdatePlayerStatistics(player, paragon, true)

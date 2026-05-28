@@ -57,7 +57,7 @@ function OnParagonClientRequestTargetLevel(player, _)
     end
 
     -- Get target's Paragon data
-    local target_paragon = target:GetData("Paragon")
+    local target_paragon = ParagonHook.GetParagonData(target)
     if not target_paragon then
         -- Target has no Paragon data (shouldn't happen but handle gracefully)
         player:SendServerResponse(ParagonHook.Addon.Prefix, 6, 0)

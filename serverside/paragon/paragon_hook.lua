@@ -159,21 +159,10 @@ local function UpdatePlayerStatistics(player, paragon, apply)
         elseif stat_data.type == "COMBAT_RATING" then
             player:ApplyRatingMod(constant_stat_type[stat_data.value], stat_value, apply)
         elseif stat_data.type == "AURA" then
-            local spellId = constant_stat_type[stat_data.value]
-
-            if apply then
-                local aura = player:GetAura(spellId)
-
-                if not aura then
-                    aura = player:AddAura(spellId, player)
-                end
-
-                if aura then
-                    aura:SetStackAmount(stat_value)
-                end
-            else
-                player:RemoveAura(spellId)
-            end
+            -- All AURA stats are handled by their respective modules:
+            -- MOVE_SPEED: paragon_move_speed.lua
+            -- REPUTATION, EXPERIENCE: paragon_reputation_exp.lua
+            -- LOOT, GOLD: paragon_loot_gold.lua
         end
 
         ::continue::

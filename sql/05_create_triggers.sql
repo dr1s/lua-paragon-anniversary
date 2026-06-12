@@ -48,7 +48,7 @@ BEGIN
     END IF;
 
     IF v_type = 'AURA' THEN
-        IF v_value NOT IN ('LOOT', 'REPUTATION', 'EXPERIENCE') THEN
+        IF v_value NOT IN ('LOOT', 'REPUTATION', 'EXPERIENCE', 'GOLD', 'MOVE_SPEED') THEN
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid AURA value for this type.';
         END IF;
     END IF;
@@ -95,7 +95,7 @@ BEGIN
     END IF;
 
     IF v_type = 'AURA' THEN
-        IF v_value NOT IN ('LOOT', 'REPUTATION', 'EXPERIENCE') THEN
+        IF v_value NOT IN ('LOOT', 'REPUTATION', 'EXPERIENCE', 'GOLD', 'MOVE_SPEED') THEN
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid AURA value for this type.';
         END IF;
     END IF;

@@ -38,7 +38,7 @@ return {
                 `id` INT NOT NULL AUTO_INCREMENT,
                 `category` INT NOT NULL DEFAULT 1,
                 `type` ENUM('AURA','COMBAT_RATING','UNIT_MODS') NOT NULL DEFAULT 'AURA',
-                `type_value` INT NOT NULL DEFAULT 0,
+                `type_value` VARCHAR(50) NOT NULL DEFAULT 'STAT_STRENGTH',
                 `icon` VARCHAR(50) NOT NULL DEFAULT '0',
                 `factor` INT NOT NULL DEFAULT 1,
                 `limit` INT(3) NOT NULL DEFAULT 255,
@@ -95,7 +95,7 @@ return {
                 END IF;
 
                 IF v_type = 'AURA' THEN
-                    IF v_value NOT IN ('LOOT', 'REPUTATION', 'EXPERIENCE') THEN
+                    IF v_value NOT IN ('LOOT', 'REPUTATION', 'EXPERIENCE', 'GOLD', 'MOVE_SPEED') THEN
                         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid AURA value for this type.';
                     END IF;
                 END IF;
@@ -144,7 +144,7 @@ return {
                 END IF;
 
                 IF v_type = 'AURA' THEN
-                    IF v_value NOT IN ('LOOT', 'REPUTATION', 'EXPERIENCE') THEN
+                    IF v_value NOT IN ('LOOT', 'REPUTATION', 'EXPERIENCE', 'GOLD', 'MOVE_SPEED') THEN
                         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid AURA value for this type.';
                     END IF;
                 END IF;
@@ -380,11 +380,14 @@ return {
         },
 
         --- Aura-based Bonuses
-        -- Custom aura IDs for special bonuses like loot, reputation, and experience
+        -- These stats are handled directly by Lua hooks, not by spell auras.
+        -- No client DBC entries required.
         AURA = {
-            LOOT                    = 1900000,
-            REPUTATION              = 1900001,
-            EXPERIENCE              = 1900002
+            LOOT                    = nil,  -- Handled by paragon_loot_gold.lua
+            REPUTATION              = nil,  -- Handled by paragon_reputation_exp.lua
+            EXPERIENCE              = nil,  -- Handled by paragon_reputation_exp.lua
+            MOVE_SPEED              = nil,  -- Handled directly in paragon_hook.lua
+            GOLD                    = nil   -- Handled by paragon_loot_gold.lua
         }
     }
 }

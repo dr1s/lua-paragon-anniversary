@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `acore_ale`.`paragon_config_statistic` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `category` INT NOT NULL DEFAULT 1,
     `type` ENUM('AURA','COMBAT_RATING','UNIT_MODS') NOT NULL DEFAULT 'AURA',
-    `type_value` INT NOT NULL DEFAULT 0,
+    `type_value` VARCHAR(50) NOT NULL DEFAULT 'STAT_STRENGTH',
     `icon` VARCHAR(50) NOT NULL DEFAULT '0',
     `factor` INT NOT NULL DEFAULT 1,
     `limit` INT(3) NOT NULL DEFAULT 255,

@@ -97,7 +97,20 @@ The **Paragon System** introduces an endgame progression mechanic for AzerothCor
 ### 🧩 **Module System**
 
 - `modules/paragon_anniversary.lua` - Experience & level-up mechanics
+- `modules/paragon_gold.lua` - Gold bonus on loot
+- `modules/paragon_move_speed.lua` - Movement speed bonus
+- `modules/paragon_levelup_animation.lua` - Level-up visual effects
+- `modules/paragon_levelup_achievement.lua` - Anniversary achievements
+- `modules/paragon_target_level.lua` - Target level display
+- `modules/paragon_reputation_exp.lua` - Reputation & XP bonuses
 - Extensible via Mediator pattern for custom features
+
+### 🔧 **C++ Modules**
+
+- `mod-paragon-loot/` - AzerothCore C++ module for loot upgrades
+  - Quality upgrade system (+1 tier per roll)
+  - Epic-to-legendary random drop system
+  - Configurable chance, tolerance, and max quality
 
 </td>
 <td width="50%">
@@ -326,13 +339,27 @@ paragon/
 │       └── SMH.ext
 ├── modules/
 │   ├── paragon_anniversary.lua     # Experience & level-up mechanics
+│   ├── paragon_gold.lua            # Gold bonus on loot
+│   ├── paragon_move_speed.lua      # Movement speed bonus
+│   ├── paragon_levelup_animation.lua
+│   ├── paragon_levelup_achievement.lua
+│   ├── paragon_target_level.lua
+│   ├── paragon_reputation_exp.lua
 │   └── README.md                   # Module documentation
-├── paragon_constant.lua            # Constants, SQL queries, stat enums
+├── paragon_constant.lua            # Constants, SQL queries, stat enum
 ├── paragon_repository.lua          # Database access layer (Singleton)
 ├── paragon_config.lua              # Configuration service (Singleton)
 ├── paragon_class.lua               # Paragon entity & business logic
 ├── paragon_hook.lua                # Event handlers & entry point
 └── README.md                       # This file
+
+mod-paragon-loot/                   # AzerothCore C++ module
+├── conf/
+│   └── mod-paragon-loot.conf.dist  # Configuration template
+├── src/
+│   ├── paragon_loot.h              # Header
+│   └── paragon_loot.cpp            # Implementation
+└── README.md                       # Module documentation
 
 doc/
 ├── INSTALL.md                      # Installation guide
@@ -374,6 +401,7 @@ Apply Statistics to Player & Send Data to Client (ParagonAnniversary addon)
 ## 🎯 Recent Improvements
 
 ### Latest Features (Latest Release)
+- ✅ **C++ Loot Module**: `mod-paragon-loot` for quality upgrades and legendary drops
 - ✅ **Dual-Mode System**: Character-linked and account-linked paragon progression
 - ✅ **Mediator Pattern Integration**: Extensible event system for custom modules
 - ✅ **Module System**: Modular business logic via `paragon_anniversary.lua`

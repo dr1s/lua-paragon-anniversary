@@ -1,0 +1,34 @@
+# Paragon Loot Module Configuration
+# Copy this file to etc/mod-paragon-loot.conf and edit as needed
+
+ParagonLoot.Enable = 1
+
+# Database name where paragon stats are stored
+ParagonLoot.Database = "acore_ale"
+
+# Upgrade chance per paragon point (0.002 = 0.2% per point)
+# At 255 points: 255 * 0.002 = 51% max chance
+ParagonLoot.ChancePerPoint = 0.002
+
+# Maximum upgrade chance cap (0.51 = 51%)
+ParagonLoot.MaxChance = 0.51
+
+# Item level tolerance when searching for upgrades (+/- levels)
+ParagonLoot.ItemLevelTolerance = 5
+
+# Maximum quality (5 = Legendary, items at this quality won't be upgraded)
+ParagonLoot.MaxQuality = 5
+
+# ============================================================================
+# Legendary Drop Settings
+# ============================================================================
+
+# Enable legendary drops from epic items
+ParagonLoot.Legendary.Enable = 1
+
+# Legendary drop chance per paragon point (0.0001 = 0.01% per point)
+# At 255 points: 255 * 0.0001 = 2.55% max chance
+ParagonLoot.Legendary.ChancePerPoint = 0.0001
+
+# Maximum legendary drop chance cap (0.0255 = 2.55%)
+ParagonLoot.Legendary.MaxChance = 0.0255

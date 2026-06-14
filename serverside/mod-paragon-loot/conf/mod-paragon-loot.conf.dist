@@ -16,6 +16,35 @@ ParagonLoot.MaxChance = 0.51
 # Item level tolerance when searching for upgrades (+/- levels)
 ParagonLoot.ItemLevelTolerance = 5
 
+# Use RequiredLevel instead of ItemLevel for upgrade matching
+# When true, searches for items with similar RequiredLevel (+/- tolerance)
+# When false (default), searches for items with similar ItemLevel (+/- tolerance)
+ParagonLoot.UseRequiredLevel = 0
+
+# Generalize upgrade matching (ignores class/subclass/inventory type)
+# When true, upgrades to ANY item of higher quality within item level range
+# When false (default), only upgrades to items of the same type/slot
+ParagonLoot.GeneralizeUpgrade = 0
+
+# Use player level instead of item level/required level for upgrade search range
+# When true, searches for items around the player's level (ensures equippable upgrades)
+# When false (default), uses the original item's ItemLevel or RequiredLevel
+ParagonLoot.UsePlayerLevel = 0
+
+# Use the killed mob's level as the base for upgrade search range
+# When true, searches for items around the mob's level (scales with content difficulty)
+# Cannot be used together with UsePlayerLevel (UsePlayerLevel takes precedence if both are true)
+ParagonLoot.UseMobLevel = 0
+
+# Chance to skip a quality tier during upgrades (0.0 = never skip)
+# Scales with LOOT stat points: actualChance = min(points * SkipQualityChance, SkipQualityMaxChance)
+# Example: 0.002 per point * 100 points = 20% skip chance per tier
+# Skipping 2 tiers requires passing two consecutive skip rolls (chance^2)
+ParagonLoot.SkipQualityChance = 0.0
+
+# Maximum skip quality chance cap regardless of stat points
+ParagonLoot.SkipQualityMaxChance = 0.50
+
 # Maximum quality (5 = Legendary, items at this quality won't be upgraded)
 ParagonLoot.MaxQuality = 5
 

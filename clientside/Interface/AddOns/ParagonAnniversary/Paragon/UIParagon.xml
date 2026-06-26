@@ -18,7 +18,7 @@
         <Size x="650" y="16"/>
         <Layers>
             <Layer>
-                <Texture file="Interface/Journeys/JourneysFrame2x">
+                <Texture file="Interface\Buttons\UI-Quickslot2">
                     <TexCoords left="0.158691" right="0.874512" top="0.655762" bottom="0.671387"/>
                 </Texture>
             </Layer>
@@ -32,7 +32,7 @@
         </Anchors>
         <Layers level="BACKGROUND">
             <Layer>
-                <Texture file="Interface/Common/portrait-ring-withbg"/>
+                <Texture file="Interface/AddOns/ParagonAnniversary/Common/portrait-ring-withbg"/>
             </Layer>
         </Layers>
 
@@ -65,7 +65,7 @@
         <!-- Background ring texture -->
         <Layers level="BACKGROUND">
             <Layer>
-                <Texture file="Interface/Common/portrait-ring-withbg"/>
+                <Texture file="Interface/AddOns/ParagonAnniversary/Common/portrait-ring-withbg"/>
             </Layer>
         </Layers>
 
@@ -104,7 +104,7 @@
         <Layers>
             <!-- Background frame -->
             <Layer level="BACKGROUND">
-                <Texture name="$parentBg" parentKey="Bg" file="Interface/Journeys/JourneysFrame2x">
+                <Texture name="$parentBg" parentKey="Bg" file="Interface\Buttons\UI-Quickslot2">
                     <TexCoords left="0.762207" right="0.814941" top="0.124512" bottom="0.177246"/>
                 </Texture>
             </Layer>
@@ -121,7 +121,7 @@
 
             <!-- Border overlay -->
             <Layer level="OVERLAY">
-                <Texture name="$parentBorder" parentKey="Border" file="Interface/Journeys/JourneysFrame2x">
+                <Texture name="$parentBorder" parentKey="Border" file="Interface\Buttons\UI-Quickslot2">
                     <TexCoords left="0.762207" right="0.814941" top="0.124512" bottom="0.177246"/>
                 </Texture>
 
@@ -148,7 +148,7 @@
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture file="Interface/Journeys/JourneysFrame2x">
+                        <Texture file="Interface\Buttons\UI-Quickslot2">
                             <TexCoords left="0.395507813" right="0.426507813" top="0.137207031" bottom="0.169207031"/>
                         </Texture>
 
@@ -209,7 +209,7 @@
 
                 <Layers>
                     <Layer>
-                        <Texture file="Interface/CovenantRenown/TheWarWithinMajorFactionsFlame">
+                        <Texture file="Interface\DialogFrame\UI-DialogBox-Header">
                             <TexCoords left="0.000976562" right="0.459961" top="0.8125" bottom="0.949219"/>
                         </Texture>
                     </Layer>
@@ -221,7 +221,7 @@
                     </Layer>
 
                     <Layer>
-                        <Texture file="Interface/Paragon/ParagonUI">
+                        <Texture file="Interface\Buttons\UI-Quickslot2">
                             <Size x="30" y="30"/>
                             <Anchors>
                                 <Anchor point="RIGHT" x="30"/>
@@ -243,17 +243,16 @@
 
         <Layers>
             <Layer level="BACKGROUND">
-                <Texture name="$parentBackground" file="Interface\Housing\housingbasicpanelstonebackground2x">
+                <Texture name="$parentBackground" file="Interface\DialogFrame\UI-DialogBox-Background">
                     <Anchors>
-                        <Anchor point="TOPLEFT"/>
-                        <Anchor point="BOTTOMRIGHT"/>
+                        <Anchor point="TOPLEFT" x="11" y="-12"/>
+                        <Anchor point="BOTTOMRIGHT" x="-12" y="11"/>
                     </Anchors>
-                    <TexCoords left="0.000976562" right="0.916992" top="0.000976562" bottom="0.709961"/>
                 </Texture>
             </Layer>
 
             <Layer level="OVERLAY">
-                <Texture name="HighlightBottom" file="Interface\CovenantRenown\TheWarWithinMajorFactionsFlame" alpha="0.5">
+                <Texture name="HighlightBottom" file="Interface\DialogFrame\UI-DialogBox-Header" alpha="0">
                     <Size x="750" y="150"/>
                     <Anchors>
                         <Anchor point="BOTTOM"/>
@@ -300,7 +299,7 @@
 
                         <Layers>
                             <Layer level="OVERLAY">
-                                <Texture name="$parentLevelTexture" file="Interface\CovenantRenown\TheWarWithinMajorFactionsFlame">
+                                <Texture name="$parentLevelTexture" file="Interface\DialogFrame\UI-DialogBox-Header">
                                     <Size x="82" y="100"/>
                                     <Anchors>
                                         <Anchor point="CENTER"/>
@@ -337,7 +336,7 @@
 
                                 <Layers>
                                     <Layer level="BACKGROUND">
-                                        <Texture name="$parentBackground" file="Interface/HUD/UIExperienceBar2x">
+                                        <Texture name="$parentBackground" file="Interface\PaperDollInfoFrame\UI-ReputationWatchBar">
                                             <Size x="565" y="13"/>
                                             <Anchors>
                                                 <Anchor point="CENTER"/>
@@ -347,7 +346,7 @@
                                     </Layer>
 
                                     <Layer level="OVERLAY">
-                                        <Texture file="Interface/HUD/UIExperienceBar2x">
+                                        <Texture file="Interface\PaperDollInfoFrame\UI-ReputationWatchBar">
                                             <Size x="570" y="18"/>
                                             <Anchors>
                                                 <Anchor point="CENTER" x="2" y="-2"/>
@@ -422,8 +421,8 @@
                 <Anchors>
                     <Anchor point="BOTTOM" relativeTo="$parentCloseButton" x="0" y="-20"/>
                 </Anchors>
-                <NormalTexture file="Interface\Common\help-i"/>
-                <HighlightTexture file="Interface\Common\help-i" alphaMode="ADD"/>
+                <NormalTexture file="Interface\AddOns\ParagonAnniversary\Common\help-i"/>
+                <HighlightTexture file="Interface\AddOns\ParagonAnniversary\Common\help-i" alphaMode="ADD"/>
                 <Scripts>
                     <OnClick>
                         UIParagon_ShowTutorial()
@@ -511,6 +510,24 @@
                         <Frames>
                             <!-- Dynamic stat lines will be created here by Lua -->
                         </Frames>
+                    </Frame>
+
+                    <Frame name="$parentEmptyMessage" parentKey="EmptyMessage" hidden="true">
+                        <Size x="600" y="80"/>
+                        <Anchors>
+                            <Anchor point="TOP" relativeTo="$parentTopSpacer" relativePoint="BOTTOM" y="-35"/>
+                        </Anchors>
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString name="$parentText" parentKey="Text" inherits="GameFontNormal" justifyH="CENTER" justifyV="MIDDLE">
+                                    <Size x="560" y="80"/>
+                                    <Anchors>
+                                        <Anchor point="CENTER"/>
+                                    </Anchors>
+                                    <Color r="0.90" g="0.80" b="0.50" a="1"/>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                     </Frame>
                 </Frames>
             </Frame>

@@ -23,25 +23,12 @@
 ]]
 
 -- ============================================================================
--- PERSISTENT SETTINGS
+-- CVAR REGISTRATION
 -- ============================================================================
 
-ParagonSaved = ParagonSaved or {}
-
--- Comme le code est chargé via FrameXML côté client,
--- on enregistre explicitement la variable à sauver.
-RegisterForSave("ParagonSaved")
-
--- Valeurs par défaut
-if ParagonSaved.showMainMenuXP == nil then
-    -- migration depuis l'ancien CVar si présent
-    local legacy = GetCVar("paragonShowMainMenuXP")
-    if legacy ~= nil then
-        ParagonSaved.showMainMenuXP = (legacy == "1")
-    else
-        ParagonSaved.showMainMenuXP = false
-    end
-end
+-- Register custom CVar for Paragon MainMenuBar XP visibility
+-- Parameters: name, defaultValue, characterSpecific (true/false)
+RegisterCVar("paragonShowMainMenuXP", "0", true)
 
 -- ============================================================================
 -- STATIC POPUPS (Dialogues)
@@ -160,6 +147,7 @@ function UIParagon_OnLoad(self)
 
     -- Set localized title text
     self.body.TopSpacer.Title:SetText(self.Locales.STATISTICS_TEXT)
+    self.body.EmptyMessage.Text:SetText("No Paragon statistics received. Load rows into paragon_config_category and paragon_config_statistic, then reload the server scripts.")
 
     -- Set portrait icon (holy power infusion spell icon)
     SetPortraitToTexture(self.PortraitFrame.Portrait, "Interface\\Icons\\spell_holy_powerinfusion")
@@ -182,10 +170,6 @@ end
 --- Called when UIParagon frame is shown
 -- Closes other micro button frames to avoid overlapping
 function UIParagon_OnShow()
-	if UIParagon.ShowMainMenuXP then
-		UIParagon.ShowMainMenuXP:SetChecked(ParagonSaved and ParagonSaved.showMainMenuXP == true)
-	end
-
     -- Close character frame
     if CharacterFrame and CharacterFrame:IsShown() then
         HideUIPanel(CharacterFrame)
@@ -281,6 +265,16 @@ function UIParagon_RebuildStatistics()
 
     local Locales = GetLocaleTable()
     local yOffset = 0
+    local rowsShown = 0
+
+    local children = {statisticsList:GetChildren()}
+    for _, child in ipairs(children) do
+        child:Hide()
+    end
+
+    if UIParagon.Body.EmptyMessage then
+        UIParagon.Body.EmptyMessage:Hide()
+    end
 
     -- Process each category from ParagonData
     for _, category in ipairs(ParagonData.categories) do
@@ -300,12 +294,21 @@ function UIParagon_RebuildStatistics()
             end
 
             line:Show()
+            rowsShown = rowsShown + 1
 
             -- Update category title with localized text
             local categoryName = Locales[category.nameKey] or category.nameKey
             if line.Title and line.Title.Text then
                 line.Title.Text:SetText(categoryName)
             end
+
+            local lineChildren = {line:GetChildren()}
+            for _, child in ipairs(lineChildren) do
+                if child ~= line.Title then
+                    child:Hide()
+                end
+            end
+            line.Title:Show()
 
             -- Process stats for this category
             local xOffset = 220  -- Start position after title section (185 + spacing)
@@ -329,6 +332,7 @@ function UIParagon_RebuildStatistics()
                 statFrame.categoryId = categoryId
                 statFrame.statId = stat.id
                 statFrame.statLimit = stat.limit
+                statFrame.statValue = stat.value
 
                 -- Get localized stat name and description
                 local statName = Locales[stat.nameKey] or stat.nameKey
@@ -347,6 +351,7 @@ function UIParagon_RebuildStatistics()
                 if PendingChanges and PendingChanges.stats and PendingChanges.stats[key] then
                     displayValue = PendingChanges.stats[key].value
                 end
+                statFrame.statValue = displayValue
 
                 -- Update value badge with current or pending stat value
                 if statFrame.Value and statFrame.Value.Text then
@@ -376,27 +381,31 @@ function UIParagon_RebuildStatistics()
                     -- Enable mouse wheel scrolling
                     statFrame:EnableMouseWheel(true)
                     statFrame:SetScript("OnMouseWheel", function(self, delta)
-						if delta > 0 then
-							UIParagon_ModifyStatValue(self.categoryId, self.statId, 5)   -- Scroll up: +5
-						else
-							UIParagon_ModifyStatValue(self.categoryId, self.statId, -5)  -- Scroll down: -5
-						end
-					end)
+                        if delta > 0 then
+                            -- If statLimit is 0 (unlimited) or value + 5 is within limit
+                            if (self.statLimit == 0) or ((self.statValue + 5) <= (self.statLimit)) then
+                                UIParagon_ModifyStatValue(self.categoryId, self.statId, 5)  -- Scroll up: +5
+                            end
+                        else
+                            UIParagon_ModifyStatValue(self.categoryId, self.statId, -5) -- Scroll down: -5
+                        end
+                    end)
 
                     -- Mouse button interactions
                     statFrame:SetScript("OnMouseDown", function(self, button)
-						if button == "LeftButton" then
-							UIParagon_ModifyStatValue(self.categoryId, self.statId, 1)   -- Left click: +1
-						elseif button == "RightButton" then
-							UIParagon_ModifyStatValue(self.categoryId, self.statId, -1)  -- Right click: -1
-						elseif button == "MiddleButton" then
-							StaticPopup_Show("PARAGON_STAT_CHOOSE_ACTION", nil, nil, {
-								categoryId = self.categoryId,
-								statId = self.statId,
-								statName = self.statTitle or "Stat"
-							})
-						end
-					end)
+                        if button == "LeftButton" and ((self.statLimit == 0) or ((self.statValue + 1) <= self.statLimit)) then
+                            UIParagon_ModifyStatValue(self.categoryId, self.statId, 1)   -- Left click: +1
+                        elseif button == "RightButton" then
+                            UIParagon_ModifyStatValue(self.categoryId, self.statId, -1)  -- Right click: -1
+                        elseif button == "MiddleButton" then
+                            -- Middle click: Open dialog to choose Add/Remove then enter amount
+                            StaticPopup_Show("PARAGON_STAT_CHOOSE_ACTION", nil, nil, {
+                                categoryId = self.categoryId,
+                                statId = self.statId,
+                                statName = self.statTitle or "Stat"
+                            })
+                        end
+                    end)
                 end
 
                 -- Reapply visual modification marker if this stat has pending changes
@@ -409,6 +418,10 @@ function UIParagon_RebuildStatistics()
 
             yOffset = yOffset - 80  -- Space between category lines (50 height + 30 spacing)
         end
+    end
+
+    if rowsShown == 0 and UIParagon.Body.EmptyMessage then
+        UIParagon.Body.EmptyMessage:Show()
     end
 end
 
@@ -626,7 +639,15 @@ end
 -- Sets the initial state from CVar and configures the label
 -- @param self CheckButton The checkbox frame
 function UIParagon_ShowMainMenuXP_OnLoad(self)
-    local isEnabled = ParagonSaved.showMainMenuXP == true
+    -- Get saved setting from CVar, initialize if it doesn't exist
+    local cvarValue = GetCVar("paragonShowMainMenuXP")
+    if (cvarValue == nil) then
+        -- CVar doesn't exist yet, create it with default value (0 = disabled)
+        SetCVar("paragonShowMainMenuXP", "0")
+        cvarValue = "0"
+    end
+
+    local isEnabled = (cvarValue == "1")
 
     self:SetChecked(isEnabled)
 
@@ -640,9 +661,10 @@ end
 -- Toggles the visibility of ParagonExpBar on MainMenuBar
 -- @param self CheckButton The checkbox frame
 function UIParagon_ShowMainMenuXP_OnClick(self)
-    local isChecked = self:GetChecked() and true or false
+    local isChecked = self:GetChecked()
 
-    ParagonSaved.showMainMenuXP = isChecked
+    SetCVar("paragonShowMainMenuXP", isChecked and "1" or "0")
+
     UIParagon_UpdateMainMenuXPVisibility()
 
     if isChecked then
@@ -666,11 +688,15 @@ end
 --- Update the visibility of ParagonExpBar based on checkbox state
 -- This function is called when the checkbox is toggled or on load
 function UIParagon_UpdateMainMenuXPVisibility()
-    if not ParagonExpBar then
-        return
+    if not ParagonExpBar then return end
+
+    local cvarValue = GetCVar("paragonShowMainMenuXP")
+    if (cvarValue == nil) then
+        SetCVar("paragonShowMainMenuXP", "0")
+        cvarValue = "0"
     end
 
-    local isEnabled = ParagonSaved and ParagonSaved.showMainMenuXP == true
+    local isEnabled = (cvarValue == "1")
 
     if isEnabled then
         ParagonExpBar_Update()

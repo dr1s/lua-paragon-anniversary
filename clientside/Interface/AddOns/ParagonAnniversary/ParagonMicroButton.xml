@@ -1,0 +1,92 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Button name="ParagonMicroButton" parent="MainMenuBarArtFrame" motionScriptsWhileDisabled="true">
+        <Size>
+            <AbsDimension x="26" y="58"/>
+        </Size>
+        <Anchors>
+            <Anchor point="BOTTOMRIGHT" relativeTo="CharacterMicroButton" relativePoint="BOTTOMLEFT">
+                <Offset>
+                    <AbsDimension x="2" y="0"/>
+                </Offset>
+            </Anchor>
+        </Anchors>
+        <HitRectInsets>
+            <AbsInset left="0" right="0" top="18" bottom="0"/>
+        </HitRectInsets>
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture name="$parentTexture" parentKey="texture">
+                    <Size>
+                        <AbsDimension x="20" y="20"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="-25"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="$parentNotification" parentKey="Notification" hidden="true" frameLevel="10">
+                <Size>
+                    <AbsDimension x="18" y="18"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOP" relativePoint="TOP">
+                        <Offset>
+                            <AbsDimension x="8" y="-20"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <Texture name="$parentBg" parentKey="Bg" file="Interface/Buttons/UI-GroupLoot-Coin-Up">
+                            <Size>
+                                <AbsDimension x="18" y="18"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="CENTER"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                    <Layer level="OVERLAY">
+                        <Texture name="$parentGlow" parentKey="Glow" file="Interface/Buttons/UI-GroupLoot-Coin-Up" alphaMode="ADD" alpha="0.8">
+                            <Size>
+                                <AbsDimension x="22" y="22"/>
+                            </Size>
+                            <Anchors>
+                                <Anchor point="CENTER"/>
+                            </Anchors>
+                        </Texture>
+                    </Layer>
+                </Layers>
+                <Scripts>
+                    <OnLoad function="ParagonMicroButton_Notification_OnLoad"/>
+                    <OnUpdate function="ParagonMicroButton_Notification_OnUpdate"/>
+                    <OnClick function="ParagonMicroButton_Notification_OnClick"/>
+                    <OnEnter function="ParagonMicroButton_Notification_OnEnter"/>
+                    <OnLeave>
+                        GameTooltip:Hide()
+                    </OnLeave>
+                </Scripts>
+            </Button>
+        </Frames>
+        <Scripts>
+            <OnLoad function="ParagonMicroButton_OnLoad"/>
+            <OnClick function="ToggleParagonFrame"/>
+            <OnEnter function="ParagonMicroButton_OnEnter"/>
+            <OnLeave>
+                GameTooltip:Hide()
+            </OnLeave>
+            <OnEnable>
+                self:SetAlpha(1)
+            </OnEnable>
+            <OnDisable>
+                self:SetAlpha(0.5)
+            </OnDisable>
+        </Scripts>
+    </Button>
+</Ui>

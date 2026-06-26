@@ -383,7 +383,7 @@ function Paragon_TutorialShowStep(stepIndex)
     ParagonTutorialTooltip.Title:SetText(L.TUTORIAL_TITLE or "Aide - Interface Paragon")
     ParagonTutorialTooltip.Description:SetText(L[step.textKey] or "Description manquante")
     ParagonTutorialTooltip.StepCounter:SetText(string.format(
-        L.TUTORIAL_STEP_COUNTER or "Étape %d/%d",
+        L.TUTORIAL_STEP_COUNTER or "??tape %d/%d",
         stepIndex,
         #TutorialState.steps
     ))

@@ -79,10 +79,13 @@ local function OnReceiveStat(statistics, cat_id)
         local statId = stat_id
 
         -- Look up localized name and description from STATISTICS locale table
-        local nameKey = Locale.STATISTICS[stat_data.type][stat_data.value].name
-        local descKey = Locale.STATISTICS[stat_data.type][stat_data.value].description
+        local statLocale = Locale.STATISTICS
+            and Locale.STATISTICS[stat_data.type]
+            and Locale.STATISTICS[stat_data.type][stat_data.value]
+        local nameKey = statLocale and statLocale.name or (stat_data.value or ("Stat " .. statId))
+        local descKey = statLocale and statLocale.description or "No description is available for this statistic."
 
-        local icon = stat_data.icon
+        local icon = stat_data.icon or "Interface\\Icons\\INV_Misc_QuestionMark"
         local value = stat_data.assigned or 0
         local limit = stat_data.limit or 255  -- Default: no practical limit
 
@@ -192,7 +195,15 @@ end
 -- @param arg_table table Nested structure: {[cat_id] = {name = string, statistics = table}}
 -- @usage Server sends categories with embedded stats, this function processes both
 function UIParagon_OnReceiveAllData(player, arg_table)
-    for cat_id, cat_data in pairs(arg_table[1]) do
+    local categories = arg_table and arg_table[1] or {}
+    if categories.name or categories.statistics then
+        categories = arg_table
+    end
+
+    ParagonData.categories = {}
+    ParagonData.stats = {}
+
+    for cat_id, cat_data in pairs(categories) do
         local categoryId = cat_id
         local nameKey = cat_data.name
         local order = cat_id
@@ -245,6 +256,10 @@ function UIParagon_OnReceiveStatistic(player, arg_table)
     local id = stat_data.id
     local category_id = stat_data.category
     local value = stat_data.value
+
+    if not ParagonData.stats[category_id] then
+        return
+    end
 
     for _, stat in ipairs(ParagonData.stats[category_id]) do
         if(stat.id == id) then
@@ -392,6 +407,7 @@ function UIParagon_UpdateStatDisplay(categoryId, statId, newValue)
         for _, statFrame in ipairs(statFrames) do
             -- Check if this is the target stat
             if statFrame.categoryId == categoryId and statFrame.statId == statId then
+                statFrame.statValue = newValue
                 if statFrame.Value and statFrame.Value.Text then
                     local valueText = tostring(newValue)
                     statFrame.Value.Text:SetText(valueText)

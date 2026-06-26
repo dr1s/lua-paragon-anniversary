@@ -28,20 +28,20 @@
     <Button name="BigRedThreeSliceButtonTemplate" virtual="true">
         <Size x="441" y="128"/>
 
-        <NormalTexture file="Interface\Buttons\128RedButton9Sliced">
-            <TexCoords left="0.00195312" right="0.919922" top="0.509766" bottom="0.759766"/>
+        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </NormalTexture>
 
-        <PushedTexture file="Interface\Buttons\128RedButton9Sliced">
-            <TexCoords left="0.00195312" right="0.919922" top="0.255859" bottom="0.505859"/>
+        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </PushedTexture>
 
-        <DisabledTexture file="Interface\Buttons\128RedButton9Sliced">
-            <TexCoords left="0.00195312" right="0.919922" top="0.00195312" bottom="0.251953"/>
+        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </DisabledTexture>
 
-        <HighlightTexture file="Interface\Buttons\128RedButton" alphaMode="ADD">
-            <TexCoords left="0.00195312" right="0.863281" top="0.190918" bottom="0.253418"/>
+        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </HighlightTexture>
 
         <PushedTextOffset x="-2" y="-1"/>
@@ -49,6 +49,17 @@
 
     <Frame name="MetalFrame2X" enableMouse="true" virtual="true" movable="true" resizable="true">
         <Size x="300" y="300"/>
+        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+            <BackgroundInsets>
+                <AbsInset left="11" right="12" top="12" bottom="11"/>
+            </BackgroundInsets>
+            <TileSize>
+                <AbsValue val="32"/>
+            </TileSize>
+            <EdgeSize>
+                <AbsValue val="32"/>
+            </EdgeSize>
+        </Backdrop>
 
         <Scripts>
             <OnLoad>
@@ -56,6 +67,7 @@
                 self:SetResizable(true);
                 self:SetMinResize(100, 100);
                 self:SetClampedToScreen(true);
+                self:SetBackdropColor(0, 0, 0, 0.85);
             </OnLoad>
             <OnDragStart>
                 if self:IsMovable() then
@@ -86,79 +98,79 @@
                 </Layers>
             </Frame>
 
-            <Frame name="$parentMetalBorder" parentKey="MetalBorder" frameLevel="10">
+            <Frame name="$parentMetalBorder" parentKey="MetalBorder" frameLevel="10" alpha="0">
                 <Anchors>
                     <Anchor point="TOPLEFT" x="-15" y="30"/>
                     <Anchor point="BOTTOMRIGHT" x="5" y="-5"/>
                 </Anchors>
                 <Layers>
                     <Layer level="OVERLAY">
-                        <Texture name="$parentCornerTopLeft" parentKey="CornerTopLeft" file="Interface/FrameGeneral/UIFrameMetal2x">
+                        <Texture name="$parentCornerTopLeft" parentKey="CornerTopLeft" file="Interface\DialogFrame\UI-DialogBox-Corner">
                             <Size x="75" y="75"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" x="0" y="-1"/>
                             </Anchors>
-                            <TexCoords left="0.00195312" right="0.294922" top="0.298828" bottom="0.591797"/>
+                            <TexCoords left="0" right="1" top="0" bottom="1"/>
                         </Texture>
 
-                        <Texture name="$parentCornerTopRight" parentKey="CornerTopRight" file="Interface/FrameGeneral/UIFrameMetal2x">
+                        <Texture name="$parentCornerTopRight" parentKey="CornerTopRight" file="Interface\DialogFrame\UI-DialogBox-Corner">
                             <Size x="75" y="75"/>
                             <Anchors>
                                 <Anchor point="TOPRIGHT" x="0" y="-1"/>
                             </Anchors>
-                            <TexCoords left="0.298828" right="0.591797" top="0.00195312" bottom="0.294922"/>
+                            <TexCoords left="0" right="1" top="0" bottom="1"/>
                         </Texture>
 
-                        <Texture name="$parentCornerBottomLeft" parentKey="CornerBottomLeft" file="Interface/FrameGeneral/UIFrameMetal2x">
+                        <Texture name="$parentCornerBottomLeft" parentKey="CornerBottomLeft" file="Interface\DialogFrame\UI-DialogBox-Corner">
                             <Size x="32" y="32"/>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" x="0" y="0"/>
                             </Anchors>
-                            <TexCoords left="0.298828" right="0.423828" top="0.298828" bottom="0.423828"/>
+                            <TexCoords left="0" right="1" top="0" bottom="1"/>
                         </Texture>
 
-                        <Texture name="$parentCornerBottomRight" parentKey="CornerBottomRight" file="Interface/FrameGeneral/UIFrameMetal2x">
+                        <Texture name="$parentCornerBottomRight" parentKey="CornerBottomRight" file="Interface\DialogFrame\UI-DialogBox-Corner">
                             <Size x="32" y="32"/>
                             <Anchors>
                                 <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
                             </Anchors>
-                            <TexCoords left="0.427734" right="0.552734" top="0.298828" bottom="0.423828"/>
+                            <TexCoords left="0" right="1" top="0" bottom="1"/>
                         </Texture>
 
-                        <Texture name="$parentBorderTop" parentKey="BorderTop" file="Interface/FrameGeneral/UIFrameMetalHorizontal2x" horizTile="true">
+                        <Texture name="$parentBorderTop" parentKey="BorderTop" file="Interface\DialogFrame\UI-DialogBox-Border" horizTile="true">
                             <Size x="32" y="75"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeTo="$parentCornerTopLeft" relativePoint="TOPRIGHT"/>
                                 <Anchor point="TOPRIGHT" relativeTo="$parentCornerTopRight" relativePoint="TOPLEFT"/>
                             </Anchors>
-                            <TexCoords left="0" right="0" top="0.00390625" bottom="0.589844"/>
+                            <TexCoords left="0" right="1" top="0" bottom="1"/>
                         </Texture>
 
-                        <Texture name="$parentBorderLeft" parentKey="BorderLeft" file="Interface/FrameGeneral/UIFrameMetalVertical2x" vertTile="true">
+                        <Texture name="$parentBorderLeft" parentKey="BorderLeft" file="Interface\DialogFrame\UI-DialogBox-Border" vertTile="true">
                             <Size x="75" y="0"/>
                             <Anchors>
                                 <Anchor point="TOPLEFT" relativeTo="$parentCornerTopLeft" relativePoint="BOTTOMLEFT" x="0" y="0"/>
                                 <Anchor point="BOTTOMLEFT" relativeTo="$parentCornerBottomLeft" relativePoint="TOPLEFT" x="0" y="0"/>
                             </Anchors>
-                            <TexCoords left="0.00195312" right="0.294922" top="0" bottom="1"/>
+                            <TexCoords left="0" right="1" top="0" bottom="1"/>
                         </Texture>
 
-                        <Texture name="$parentBorderRight" parentKey="BorderRight" file="Interface/FrameGeneral/UIFrameMetalVertical2x" vertTile="true">
+                        <Texture name="$parentBorderRight" parentKey="BorderRight" file="Interface\DialogFrame\UI-DialogBox-Border" vertTile="true">
                             <Size x="75" y="0"/>
                             <Anchors>
                                 <Anchor point="TOPRIGHT" relativeTo="$parentCornerTopRight" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                                 <Anchor point="BOTTOMRIGHT" relativeTo="$parentCornerBottomRight" relativePoint="TOPRIGHT" x="0" y="0"/>
                             </Anchors>
-                            <TexCoords left="0.298828" right="0.591797" top="0" bottom="1"/>
+                            <TexCoords left="0" right="1" top="0" bottom="1"/>
                         </Texture>
 
-                        <Texture name="$parentBorderBottom" parentKey="BorderBottom" file="Interface/FrameGeneral/UIFrameMetalHorizontal2x" horizTile="true">
+                        <Texture name="$parentBorderBottom" parentKey="BorderBottom" file="Interface\DialogFrame\UI-DialogBox-Border" horizTile="true">
                             <Size x="0" y="32"/>
                             <Anchors>
                                 <Anchor point="BOTTOMLEFT" relativeTo="$parentCornerBottomLeft" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
                                 <Anchor point="BOTTOMRIGHT" relativeTo="$parentCornerBottomRight" relativePoint="BOTTOMLEFT" x="0" y="0"/>
                             </Anchors>
-                            <TexCoords left="0" right="1" top="0.597656" bottom="0.847656"/>
+                            <TexCoords left="0" right="1" top="0" bottom="1"/>
                         </Texture>
                     </Layer>
                 </Layers>
@@ -181,7 +193,7 @@
                 </Layers>
             </Frame>
 
-            <!-- Boutons de contrôle -->
+            <!-- Boutons de contr??le -->
             <Button name="$parentCloseButton" parentKey="CloseButton" inherits="CloseButtonTemplate, CloseButton2X" frameLevel="20">
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativeTo="$parentMetalBorder" relativePoint="TOPRIGHT" x="-4" y="-17"/>
@@ -196,7 +208,7 @@
         </Frames>
     </Frame>
 
-    <!-- Template combiné pour créer un cadre avec portrait -->
+    <!-- Template combin?? pour cr??er un cadre avec portrait -->
     <Frame name="PortraitFrame2X" inherits="MetalFrame2X" virtual="true" enableMouse="true">
         <Scripts>
             <OnLoad>
@@ -240,20 +252,20 @@
             </OnLeave>
         </Scripts>
 
-        <NormalTexture file="Interface/Buttons/redbutton2x">
-            <TexCoords left="0.152344" right="0.292969" top="0.0078125" bottom="0.304688"/>
+        <NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </NormalTexture>
 
-        <PushedTexture file="Interface/Buttons/redbutton2x">
-            <TexCoords left="0.152344" right="0.292969" top="0.632812" bottom="0.929688"/>
+        <PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </PushedTexture>
 
-        <DisabledTexture file="Interface/Buttons/redbutton2x">
-            <TexCoords left="0.152344" right="0.292969" top="0.320312" bottom="0.617188"/>
+        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </DisabledTexture>
 
-        <HighlightTexture file="Interface/Buttons/redbutton2x" alphaMode="ADD">
-            <TexCoords left="0.449219" right="0.589844" top="0.0078125" bottom="0.304688"/>
+        <HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </HighlightTexture>
     </Button>
 
@@ -284,20 +296,20 @@
             </OnLeave>
         </Scripts>
 
-        <NormalTexture file="Interface/Buttons/redbutton2x">
-            <TexCoords left="0.300781" right="0.441406" top="0.0078125" bottom="0.304688"/>
+        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </NormalTexture>
 
-        <PushedTexture file="Interface/Buttons/redbutton2x">
-            <TexCoords left="0.300781" right="0.441406" top="0.632812" bottom="0.929688"/>
+        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </PushedTexture>
 
-        <DisabledTexture file="Interface/Buttons/redbutton2x">
-            <TexCoords left="0.152344" right="0.292969" top="0.320312" bottom="0.617188"/>
+        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </DisabledTexture>
 
-        <HighlightTexture file="Interface/Buttons/redbutton2x" alphaMode="ADD">
-            <TexCoords left="0.449219" right="0.589844" top="0.0078125" bottom="0.304688"/>
+        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Up" alphaMode="ADD">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </HighlightTexture>
     </Button>
 
@@ -328,20 +340,20 @@
             </OnLeave>
         </Scripts>
 
-        <NormalTexture file="Interface/Buttons/redbutton2x">
-            <TexCoords left="0.00390625" right="0.144531" top="0.0078125" bottom="0.304688"/>
+        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </NormalTexture>
 
-        <PushedTexture file="Interface/Buttons/redbutton2x">
-            <TexCoords left="0.00390625" right="0.144531" top="0.632812" bottom="0.929688"/>
+        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </PushedTexture>
 
-        <DisabledTexture file="Interface/Buttons/redbutton2x">
-            <TexCoords left="0.00390625" right="0.144531" top="0.320312" bottom="0.617188"/>
+        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </DisabledTexture>
 
-        <HighlightTexture file="Interface/Buttons/redbutton2x" alphaMode="ADD">
-            <TexCoords left="0.449219" right="0.589844" top="0.0078125" bottom="0.304688"/>
+        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Up" alphaMode="ADD">
+            <TexCoords left="0" right="1" top="0" bottom="1"/>
         </HighlightTexture>
     </Button>
 </Ui>

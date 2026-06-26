@@ -1,0 +1,16 @@
+## Interface: 30300
+## Title: Paragon Anniversary
+## Notes: Client UI for the Paragon Anniversary system.
+## Author: Paragon Team
+## Version: 0.1-addon
+
+lib\c_timer.lua
+lib\smallfolk.lua
+lib\CMH.lua
+
+Templates\UITemplate2X.xml
+Paragon\UIParagon.xml
+Paragon\ParagonExpBar.xml
+
+ParagonMicroButton.lua
+ParagonMicroButton.xml

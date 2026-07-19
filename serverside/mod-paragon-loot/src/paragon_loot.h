@@ -14,7 +14,6 @@ public:
 
 private:
     uint32 FindHigherQualityItem(uint32 itemId, uint8 currentQuality, uint8 playerLevel, uint8 mobLevel);
-    uint32 FindRandomLegendary(uint32 itemId, uint8 playerLevel, uint8 mobLevel);
 };
 
 #endif // PARAGON_LOOT_H

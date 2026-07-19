@@ -1,6 +1,6 @@
 # mod-paragon-loot
 
-AzerothCore C++ module that enables paragon LOOT stat to upgrade creature loot quality and randomly drop legendary items.
+AzerothCore C++ module that enables paragon LOOT stat to upgrade creature loot quality.
 
 ## Features
 
@@ -9,7 +9,6 @@ AzerothCore C++ module that enables paragon LOOT stat to upgrade creature loot q
 - Configurable upgrade chance per stat point
 - Flexible item matching: by type/slot, any item, or level-based
 - Skip quality tiers (e.g., green → epic) with configurable chance
-- Epic-to-legendary random drop system
 - Works with any creature that drops loot
 
 ## Why This Module?
@@ -71,14 +70,6 @@ These options control what level is used as the base for the upgrade search rang
 | `ParagonLoot.SkipQualityChance` | 0.0 | Chance per point to skip a quality tier (scales with LOOT stat) |
 | `ParagonLoot.SkipQualityMaxChance` | 0.50 | Maximum skip chance cap |
 
-### Legendary Drops
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `ParagonLoot.Legendary.Enable` | 1 | Enable epic-to-legendary drops |
-| `ParagonLoot.Legendary.ChancePerPoint` | 0.0001 | Legendary chance per stat point (0.01%) |
-| `ParagonLoot.Legendary.MaxChance` | 0.0255 | Maximum legendary chance (2.55%) |
-
 ## How It Works
 
 1. Creature dies → loot table is processed
@@ -90,11 +81,8 @@ These options control what level is used as the base for the upgrade search rang
    - Searches the database for a replacement item matching the target quality
    - **Default mode**: Same `class`, `subclass`, `InventoryType`
    - **GeneralizeUpgrade mode**: Any item of the target quality within the level range
-   - Level range is determined by the active search level mode (player level, mob level, required level, or item level)
-5. If the item is epic (Quality 4), a separate legendary roll triggers:
-   - Uses the same search level and matching mode settings
-   - Searches for a random legendary within the level range
-6. Replaces the dropped itemid with the upgraded version
+    - Level range is determined by the active search level mode (player level, mob level, required level, or item level)
+5. Replaces the dropped itemid with the upgraded version
 
 ### Search Level Priority
 

@@ -45,6 +45,14 @@ ParagonLoot.SkipQualityChance = 0.0
 # Maximum skip quality chance cap regardless of stat points
 ParagonLoot.SkipQualityMaxChance = 0.50
 
+# When enabled, applies a separate lower cap to skipping directly to Legendary quality
+# This prevents high-paragon players from too frequently skipping to Legendary items
+ParagonLoot.LimitLegendarySkipChance = 0
+
+# Maximum skip chance when skipping TO Legendary quality (only used when LimitLegendarySkipChance = 1)
+# Lower values make it much harder to skip tiers and land on Legendary
+ParagonLoot.LegendarySkipMaxChance = 0.10
+
 # Maximum quality (5 = Legendary, items at this quality won't be upgraded)
 ParagonLoot.MaxQuality = 5
 

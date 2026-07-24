@@ -8,7 +8,9 @@ AzerothCore C++ module that enables paragon LOOT stat to upgrade creature loot q
 - Upgrades loot items based on the player's paragon LOOT stat
 - Configurable upgrade chance per stat point
 - Flexible item matching: by type/slot, any item, or level-based
+- Class-locked upgrades: respects item class requirements (all-class items also allowed)
 - Skip quality tiers (e.g., green → epic) with configurable chance
+- Legendary skip limiter: cap the chance of skipping directly to Legendary quality
 - Works with any creature that drops loot
 
 ## Why This Module?
@@ -69,6 +71,8 @@ These options control what level is used as the base for the upgrade search rang
 |---------|---------|-------------|
 | `ParagonLoot.SkipQualityChance` | 0.0 | Chance per point to skip a quality tier (scales with LOOT stat) |
 | `ParagonLoot.SkipQualityMaxChance` | 0.50 | Maximum skip chance cap |
+| `ParagonLoot.LimitLegendarySkipChance` | 0 | Apply a separate lower cap when skipping to Legendary quality |
+| `ParagonLoot.LegendarySkipMaxChance` | 0.10 | Max skip chance when target quality is Legendary (used when `LimitLegendarySkipChance = 1`) |
 
 ## How It Works
 
@@ -78,8 +82,9 @@ These options control what level is used as the base for the upgrade search rang
 4. For each loot item, rolls for quality upgrade:
    - If the roll succeeds, determines the target quality tier
    - **Skip Quality System**: Each consecutive skip requires passing another roll. With a 20% skip chance, skipping 2 tiers has a 4% probability (0.20²), 3 tiers has 0.8% (0.20³)
-   - Searches the database for a replacement item matching the target quality
-   - **Default mode**: Same `class`, `subclass`, `InventoryType`
+    - Searches the database for a replacement item matching the target quality
+    - **Class requirements**: Only items usable by the player's class are selected. Items with `AllowableClass = 0` (usable by all classes) are also included.
+    - **Default mode**: Same `class`, `subclass`, `InventoryType`
    - **GeneralizeUpgrade mode**: Any item of the target quality within the level range
     - Level range is determined by the active search level mode (player level, mob level, required level, or item level)
 5. Replaces the dropped itemid with the upgraded version
@@ -103,7 +108,7 @@ When `UsePlayerLevel` or `UseMobLevel` is active, the database queries use `Requ
 
 **UseMobLevel + GeneralizeUpgrade**: A level 80 player kills a level 70 elite. The upgrade searches for any item (any type) with RequiredLevel 65-75 of the next quality tier.
 
-**SkipQualityChance**: With 100 LOOT stat points and `SkipQualityChance = 0.002`, the skip chance is 20%. A green item has a 20% chance to become blue, a 4% chance to become epic, and a 0.8% chance to become legendary directly.
+**SkipQualityChance**: With 100 LOOT stat points and `SkipQualityChance = 0.002`, the skip chance is 20%. A green item has a 20% chance to become blue, a 4% chance to become epic, and a 0.8% chance to become legendary directly. When `LimitLegendarySkipChance = 1`, the final skip to Legendary is capped at `LegendarySkipMaxChance` (default 10%), making legendary skips much rarer regardless of paragon stat points.
 
 ## Requirements
 

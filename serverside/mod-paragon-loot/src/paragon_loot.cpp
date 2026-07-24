@@ -17,6 +17,8 @@ static bool _usePlayerLevel = false;
 static bool _useMobLevel = false;
 static float _skipQualityChance = 0.0f;
 static float _skipQualityMaxChance = 0.50f;
+static bool _limitLegendarySkipChance = false;
+static float _legendarySkipMaxChance = 0.10f;
 static uint8 _maxQuality = 5;
 
 void LoadParagonLootConfig()
@@ -33,6 +35,8 @@ void LoadParagonLootConfig()
     _useMobLevel = sConfigMgr->GetOption<bool>("ParagonLoot.UseMobLevel", false);
     _skipQualityChance = sConfigMgr->GetOption<float>("ParagonLoot.SkipQualityChance", 0.0f);
     _skipQualityMaxChance = sConfigMgr->GetOption<float>("ParagonLoot.SkipQualityMaxChance", 0.50f);
+    _limitLegendarySkipChance = sConfigMgr->GetOption<bool>("ParagonLoot.LimitLegendarySkipChance", false);
+    _legendarySkipMaxChance = sConfigMgr->GetOption<float>("ParagonLoot.LegendarySkipMaxChance", 0.10f);
 }
 
 ParagonLootScript::ParagonLootScript()
@@ -40,7 +44,7 @@ ParagonLootScript::ParagonLootScript()
 {
 }
 
-uint32 ParagonLootScript::FindHigherQualityItem(uint32 itemId, uint8 currentQuality, uint8 playerLevel, uint8 mobLevel)
+uint32 ParagonLootScript::FindHigherQualityItem(uint32 itemId, uint8 currentQuality, uint8 playerLevel, uint8 mobLevel, uint32 playerClass)
 {
     uint8 targetQuality = currentQuality + 1;
     if (targetQuality > _maxQuality)
@@ -57,17 +61,20 @@ uint32 ParagonLootScript::FindHigherQualityItem(uint32 itemId, uint8 currentQual
     const char* levelColumn = (_usePlayerLevel || _useMobLevel) ? "RequiredLevel" :
                               (_useRequiredLevel ? "RequiredLevel" : "ItemLevel");
 
+    uint32 classMask = (1u << (playerClass - 1));
+
     if (_generalizeUpgrade)
     {
         QueryResult result = WorldDatabase.Query(
             "SELECT entry FROM item_template "
             "WHERE Quality = {} AND {} BETWEEN {} AND {} "
             "AND entry != {} "
+            "AND (AllowableClass = 0 OR AllowableClass & {}) "
             "ORDER BY RAND() "
             "LIMIT 1",
             targetQuality, levelColumn,
             searchLevel - _itemLevelTolerance, searchLevel + _itemLevelTolerance,
-            itemId
+            itemId, classMask
         );
 
         if (result)
@@ -84,11 +91,12 @@ uint32 ParagonLootScript::FindHigherQualityItem(uint32 itemId, uint8 currentQual
             "WHERE Quality = {} AND class = {} AND subclass = {} "
             "AND InventoryType = {} AND {} BETWEEN {} AND {} "
             "AND entry != {} "
+            "AND (AllowableClass = 0 OR AllowableClass & {}) "
             "ORDER BY ABS({} - {}) ASC "
             "LIMIT 1",
             targetQuality, itemClass, itemSubClass, inventoryType,
             levelColumn, searchLevel - _itemLevelTolerance, searchLevel + _itemLevelTolerance,
-            itemId, levelColumn, searchLevel
+            itemId, classMask, levelColumn, searchLevel
         );
 
         if (result)
@@ -150,17 +158,19 @@ void ParagonLootScript::OnAfterLootTemplateProcess(Loot* loot, LootTemplate cons
                 uint8 targetQuality = currentTemplate->Quality + 1;
                 if (_skipQualityChance > 0.0f)
                 {
-                    float actualSkipChance = std::min(lootStatValue * _skipQualityChance, _skipQualityMaxChance);
                     while (targetQuality + 1 <= _maxQuality)
                     {
+                        float effectiveMaxChance = (_limitLegendarySkipChance && targetQuality + 1 >= _maxQuality)
+                            ? _legendarySkipMaxChance : _skipQualityMaxChance;
+                        float effectiveSkipChance = std::min(lootStatValue * _skipQualityChance, effectiveMaxChance);
                         float skipRoll = static_cast<float>(urand(1, 10000)) / 10000.0f;
-                        if (skipRoll >= actualSkipChance)
+                        if (skipRoll >= effectiveSkipChance)
                             break;
                         targetQuality++;
                     }
                 }
 
-                uint32 newItemId = FindHigherQualityItem(item.itemid, targetQuality, playerLevel, mobLevel);
+                uint32 newItemId = FindHigherQualityItem(item.itemid, targetQuality, playerLevel, mobLevel, lootOwner->getClass());
                 if (newItemId != 0)
                 {
                     ItemTemplate const* newTemplate = sObjectMgr->GetItemTemplate(newItemId);

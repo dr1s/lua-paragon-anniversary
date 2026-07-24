@@ -13,7 +13,7 @@ public:
     void OnAfterLootTemplateProcess(Loot* loot, LootTemplate const* tab, LootStore const& store, Player* lootOwner, bool personal, bool noEmptyError, uint16 lootMode) override;
 
 private:
-    uint32 FindHigherQualityItem(uint32 itemId, uint8 currentQuality, uint8 playerLevel, uint8 mobLevel);
+    uint32 FindHigherQualityItem(uint32 itemId, uint8 currentQuality, uint8 playerLevel, uint8 mobLevel, uint32 playerClass);
 };
 
 #endif // PARAGON_LOOT_H

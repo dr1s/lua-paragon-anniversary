@@ -7,6 +7,7 @@
 
 // Configuration variables
 static bool _enabled = true;
+static bool _disableInGroup = true;
 static std::string _dbName = "acore_ale";
 static float _chancePerPoint = 0.002f;
 static float _maxChance = 0.50f;
@@ -24,6 +25,7 @@ static uint8 _maxQuality = 5;
 void LoadParagonLootConfig()
 {
     _enabled = sConfigMgr->GetOption<bool>("ParagonLoot.Enable", true);
+    _disableInGroup = sConfigMgr->GetOption<bool>("ParagonLoot.DisableInGroup", true);
     _dbName = sConfigMgr->GetOption<std::string>("ParagonLoot.Database", "acore_paragon");
     _chancePerPoint = sConfigMgr->GetOption<float>("ParagonLoot.ChancePerPoint", 0.002f);
     _maxChance = sConfigMgr->GetOption<float>("ParagonLoot.MaxChance", 0.50f);
@@ -109,6 +111,9 @@ uint32 ParagonLootScript::FindHigherQualityItem(uint32 itemId, uint8 currentQual
 void ParagonLootScript::OnAfterLootTemplateProcess(Loot* loot, LootTemplate const* /*tab*/, LootStore const& /*store*/, Player* lootOwner, bool /*personal*/, bool /*noEmptyError*/, uint16 /*lootMode*/)
 {
     if (!_enabled || !loot || !lootOwner)
+        return;
+
+    if (_disableInGroup && lootOwner->GetGroup())
         return;
 
     uint32 playerGuid = lootOwner->GetGUID().GetCounter();

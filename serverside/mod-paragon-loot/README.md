@@ -43,6 +43,7 @@ Edit `etc/mod-paragon-loot.conf`:
 | Setting | Default | Description |
 |---------|---------|-------------|
 | `ParagonLoot.Enable` | 1 | Enable/disable the module |
+| `ParagonLoot.DisableInGroup` | 1 | Disable loot upgrades while the player is in a party or raid |
 | `ParagonLoot.Database` | "acore_ale" | Database name for paragon stats |
 | `ParagonLoot.ChancePerPoint` | 0.002 | Upgrade chance per stat point (0.2%) |
 | `ParagonLoot.MaxChance` | 0.51 | Maximum upgrade chance (51%) |

@@ -3,6 +3,11 @@
 
 ParagonLoot.Enable = 1
 
+# Disable paragon loot upgrades while the player is in a group or raid
+# When 1 (default), no upgrades occur while in a party or raid
+# When 0, upgrades still occur while grouped
+ParagonLoot.DisableInGroup = 1
+
 # Database name where paragon stats are stored
 ParagonLoot.Database = "acore_ale"
 
